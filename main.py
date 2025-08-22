@@ -1,4 +1,43 @@
 # Create deck of cards each with a value and suit
+# List of all values and suits each card could have
+values = range(2, 15)
+suits = ["spades", "hearts", "clubs", "diamonds"]
+
+# Create a dictionary for face cards
+face_cards = {
+    11: 'J',
+    12: 'Q',
+    13: 'K',
+    14: 'A',
+    'J': 11,
+    'Q': 12,
+    'K': 13,
+    'A': 14
+}
+
+# Create a class for a card with a value and suit
+class Card:
+    def __init__(self, value, suit, id):
+        self.value = value
+        self.suit = suit
+        self.id = id
+
+# Generates a deck of 52 cards each with a suit and value
+def generate_cards(values, suits):
+    deck = []
+    for suit in suits:
+        for value in values:
+            if value in face_cards:
+                face_id = face_cards[value]
+                deck.append(Card(value, suit, face_id))
+            else:
+                deck.append(Card(value, suit, value))
+    return deck
+
+# 
+
+
+
 
 # Create a random that is able to pull a card from the deck and take it out of the remaining cards
 
