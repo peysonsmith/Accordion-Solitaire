@@ -1,3 +1,6 @@
+# imports:
+import random
+
 # Create deck of cards each with a value and suit
 # List of all values and suits each card could have
 values = range(2, 15)
@@ -23,7 +26,7 @@ class Card:
         self.id = id
 
 # Generates a deck of 52 cards each with a suit and value
-def generate_cards(values, suits):
+def generate_deck(values, suits):
     deck = []
     for suit in suits:
         for value in values:
@@ -34,17 +37,115 @@ def generate_cards(values, suits):
                 deck.append(Card(value, suit, value))
     return deck
 
-# 
-
-
-
+#-----------------------------------------------------------------------------------------------------------------
 
 # Create a random that is able to pull a card from the deck and take it out of the remaining cards
+def pull_card(deck):
+    curr_card = random.choice(deck)
+    deck.remove(curr_card)
+    return curr_card
 
-# Create a pile that remembers how many cards are on that pile and what the top card of that pile is
+#-----------------------------------------------------------------------------------------------------------------
+
+# Create a class representing a pile with a list of the cards in that pile. Have the option to add a card and 
+# find the number of cards in the pile
+class Pile:
+    def __init__(self):
+        self.cards = []
+
+    def add_card(self, card):
+        self.cards.append(card)
+
+    def size(self):
+        return len(self.cards)
+    
+    def top_card(self):
+        return self.cards[-1]
+
+#-----------------------------------------------------------------------------------------------------------------
  
 # Create a new pile of the random card that can be placed 1 pile away or 3 piles away if the suit or number
 # match of the top card of either of those piles and the current card
+piles = []
+deck = generate_deck(values, suits)
+
+# Draws by pulling a random card from the deck and putting it on top of a new pile
+def draw_card(piles, deck):
+    new_pile = Pile()
+    new_pile.add_card(pull_card(deck))
+    piles.append(new_pile)
+
+# adds the cards from one pile to another
+def combine_piles(pile1, pile2):
+    for card in pile1:
+        pile2.append(card)
+
+def make_move(piles, deck):
+    my_card = piles[-1].top_card()
+    close_card = piles[-2].top_card()
+    jump_card = piles[-4].top_card()
+
+    # Edge case: there is only 1 pile
+    if len(piles) <= 1:
+        return
+    
+    # Edge case: there is less than 4 piles
+    elif len(piles) < 4 and (my_card.suit == close_card.suit or 
+        my_card.value == close_card.piles):
+        combine_piles(piles[-1], piles[-2])
+        piles.remove[-1]
+
+
+    # Checks if your card has the same value/suit as the previous pile and the pile that is 3 piles away
+    elif ((my_card.suit == close_card.suit or 
+        my_card.value == close_card.piles) and 
+        (my_card.suit == jump_card.suit or 
+        my_card.value == jump_card.piles)):
+        # Asks the user which pile they wish to place the card on
+        choice = input("Type 'jump' to place card on far pile, type 'close' to place card on close pile: ")
+
+        # Check for invalid input
+        while choice != "jump" or "close":
+            print("Invalid input!")
+            choice = input("Type 'jump' to place card on far pile, type 'close' to place card on close pile: ")
+
+        # Place card on pile they chose
+        if choice == "jump":
+            combine_piles(piles[-1], piles[-4])
+            piles.remove[-1]
+        if choice == "close":
+            combine_piles(piles[-1], piles[-2])
+            piles.remove[-1]
+
+    # Checks if only the far pile matches
+    elif (my_card.suit == jump_card.suit or 
+        my_card.value == jump_card.piles):
+        choice = input("Type 'jump' to place card on far pile: ")
+
+        # Check for invalid input
+        while choice != "jump":
+            print("Invalid input!")
+            choice = input("Type 'jump' to place card on far pile: ")
+
+        # Place card on jump pile
+        combine_piles(piles[-1], piles[-4])
+        piles.remove[-1]
+
+    # Checks if only the close pile matches
+    elif (my_card.suit == close_card.suit or 
+        my_card.value == close_card.piles):
+        choice = input("Type 'close' to place card on close pile: ")
+
+        # Check for invalid input
+        while choice != "close":
+            print("Invalid input!")
+            choice = input("Type 'close' to place card on far pile: ")
+
+        # Place card on jump pile
+        combine_piles(piles[-1], piles[-2])
+        piles.remove[-1]
+        
+
  
 # Can now move any of the remaining piles if they are able to be played
 
