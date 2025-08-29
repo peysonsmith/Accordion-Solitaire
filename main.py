@@ -202,11 +202,15 @@ def print_piles(piles):
         pile_index += 1
     print("-------------------------------------------------------------------")
 
-# Can now move any of the remaining piles if they are able to be played
-
-# Restrict the player from drawing a new card if a move can currently be played
-
 # After all the cards have been gone through, tally up the number of points the player recieves
+# 5 for every card in the first pile, then 3, then 1, -1, -3, ...
+def count_score(piles):
+    score = 0
+    if len(piles) >= 2:
+        for i in range(0, len(piles), -1):
+            score += (piles[i].size * (7 + -2(i)))
+    return score
+            
 
 #----------------------------------------------------MAIN--------------------------------------------------------
 def main():    
@@ -256,6 +260,7 @@ def main():
         print(f"Current number of piles: {len(piles)}")
 
         input("Press Enter to continue...")
+    print(count_score(piles))
 
 main()
 #------------------------------------------------------------------------------------------------------------------
