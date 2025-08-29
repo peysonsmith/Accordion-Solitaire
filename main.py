@@ -108,9 +108,11 @@ def make_move(piles, deck, index):
         if choice == "jump":
             combine_piles(piles[index], piles[index - 3])
             del piles[index]
+            return True
         if choice == "close":
             combine_piles(piles[index], piles[index - 1])
             del piles[index]
+            return True
 
     # Checks if only the far pile matches
     elif jump_card and (my_card.suit == jump_card.suit or 
@@ -125,6 +127,7 @@ def make_move(piles, deck, index):
         # Place card on jump pile
         combine_piles(piles[index], piles[index - 3])
         del piles[index]
+        return True
 
     # Checks if only the close pile matches
     elif (my_card.suit == close_card.suit or 
@@ -139,9 +142,53 @@ def make_move(piles, deck, index):
         # Place card on close pile
         combine_piles(piles[index], piles[index - 1])
         del piles[index]
+        return True
 
     else:
-        return
+        return False
+    
+# Once a move has been and check if another move can be made and make the move
+def cascade_move(piles, deck):
+    moves_made = True
+
+    while moves_made:
+        moves_made = False
+
+        for i in range(len(piles) - 1, -1, -1):
+            if can_pile_move(piles, i):
+                print(f"Cascade move: Pile {i} can move!")
+                if make_move(piles, deck, i):
+                    moves_made = True
+                    print_piles(piles)  # Show current state
+                    break  # Start checking from the beginning again
+
+    print("No more cascade moves possible.")   
+
+# Checks if pile at given index can make a valid move
+def can_pile_move(piles, index):
+    # Boundary checks
+    if index <= 0 or index >= len(piles):
+        return False
+    if len(piles) <= 1:
+        return False
+    if index - 1 < 0:
+        return False
+        
+    my_card = piles[index].top_card()
+    close_card = piles[index - 1].top_card()
+    
+    # Check close pile match
+    close_match = (my_card.suit == close_card.suit or 
+                   my_card.value == close_card.value)
+    
+    # Check jump pile match (if exists)
+    jump_match = False
+    if index >= 3:
+        jump_card = piles[index - 3].top_card()
+        jump_match = (my_card.suit == jump_card.suit or 
+                      my_card.value == jump_card.value)
+    
+    return close_match or jump_match
 
 # Print out all of the top cards of the piles
 def print_piles(piles):
@@ -187,10 +234,28 @@ def main():
 
     deck_length = len(deck)
     for i in range(0, deck_length):
+        print(f"\n--- Drawing card {i+1} ---")
         draw_card(piles, deck)
         print_piles(piles)
+
+        #pause after drawing
+        input("Press Enter ")
+        
         index = len(piles) - 1
-        make_move(piles, deck, index)
+        
+        # Try to move the newly drawn card
+        if make_move(piles, deck, index):
+            print("Move successful! Checking for cascade moves...")
+
+            input("Press Enter ")
+
+            cascade_move(piles, deck)
+        else:
+            print("No valid moves for this card.")
+        
+        print(f"Current number of piles: {len(piles)}")
+
+        input("Press Enter to continue...")
 
 main()
 #------------------------------------------------------------------------------------------------------------------
