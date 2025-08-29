@@ -260,7 +260,7 @@ def main():
         print(f"Current number of piles: {len(piles)}")
 
         input("Press Enter to continue...")
-    print(count_score(piles))
+    print(f"Score: {count_score(piles)}")
 
 main()
 #------------------------------------------------------------------------------------------------------------------
